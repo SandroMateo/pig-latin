@@ -1,35 +1,32 @@
+function pigLatinMaker(wordIn, index) {
+  var puncts = /[.,?!:';]$/;
+  if (puncts.test(wordIn)) {
+    return wordIn.slice(index, -1) + wordIn.slice(0,index) + "ay" + wordIn.charAt(wordIn.length-1);
+  }
+  else {
+    return wordIn.slice(index) + wordIn.slice(0,index) + "ay";
+  }
+}
 function pigLatinTranslator(input) {
   var words = input.split(/[\s]+/);
   var vowels = /^[aeiou]/;
-  var pigLatinWords = [];
-  var puncts = /[.,?!:';]$/;
   words.forEach(function(word, elementIndex) {
     var isVowel = false;
     var vowelIndex = 0;
     isVowel = vowels.test(word);
     if (isVowel) {
-      if (puncts.test(word)) {
-        words[elementIndex] = word.slice(0,-2) + "ay" + word.slice(-1);
-      }
-      else {
-        words[elementIndex] = word + "ay";
-      }
+      words[elementIndex] = pigLatinMaker(word, vowelIndex);
     }
     else {
       for (var i = 0; i < word.length; i++) {
-        if(vowelIndex == 0 && vowels.test(word[i])) {
-          vowelIndex = i;
-        }
         if(vowelIndex == 0 && word[i] === "q") {
           vowelIndex = i+2;
         }
+        else if (vowelIndex == 0 && vowels.test(word[i])) {
+          vowelIndex = i;
+        }
       }
-      if (puncts.test(word)) {
-        words[elementIndex] = word.slice(vowelIndex, -1) + word.slice(0,vowelIndex) + "ay" + word.charAt(word.length-1);
-      }
-      else {
-        words[elementIndex] = word.slice(vowelIndex) + word.slice(0,vowelIndex) + "ay";
-      }
+      words[elementIndex] = pigLatinMaker(word, vowelIndex);
     }
   });
   return words.join(" ");
