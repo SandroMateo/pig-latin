@@ -1,30 +1,30 @@
 function pigLatinTranslator(input) {
   var words = input.split(/[\s]+/);
-  var vowels = ["a","e","i","o","u"];
+  var vowels = /^[aeiou]/;
   var pigLatinWords = [];
+  var puncts = /[.,?!:';]$/;
   words.forEach(function(word, elementIndex) {
     var isVowel = false;
     var vowelIndex = 0;
-    for (var i = 0; i < vowels.length; i++) {
-      if(word[0] == vowels[i]) {
-       isVowel = true;
-      }
-    }
+    isVowel = vowels.test(word);
     if (isVowel) {
-      words[elementIndex] = word + "ay";
+      if (puncts.test(word)) {
+        words[elementIndex] = word.slice(0,-2) + "ay" + word.slice(-1);
+      }
+      else {
+        words[elementIndex] = word + "ay";
+      }
     }
     else {
       for (var i = 0; i < word.length; i++) {
-        for (var j = 0; j < vowels.length; j++) {
-          if(word.charAt(i) == vowels[j] && vowelIndex == 0) {
-            vowelIndex = i;
-          }
-          if(word.charAt(i) === "q" && vowelIndex == 0) {
-            vowelIndex = i+2;
-          }
+        if(vowelIndex == 0 && vowels.test(word[i])) {
+          vowelIndex = i;
+        }
+        if(vowelIndex == 0 && word[i] === "q") {
+          vowelIndex = i+2;
         }
       }
-      if (word.slice(-1) === '.' || word.slice(-1) === ',' || word.slice(-1) === '!' || word.slice(-1) === '?' || word.slice(-1) === '\'' || word.slice(-1) === '\"') {
+      if (puncts.test(word)) {
         words[elementIndex] = word.slice(vowelIndex, -1) + word.slice(0,vowelIndex) + "ay" + word.charAt(word.length-1);
       }
       else {
